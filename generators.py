@@ -81,7 +81,6 @@ def flat_junk_group(max_rows = 500, max_items = 40):
     n=np.random.randint(1, max_items, size=1)
     n = int(n)
 
-
     # Random means
     means = 2*np.random.random(size=n)-1
 
@@ -116,7 +115,7 @@ def flat_junk_group(max_rows = 500, max_items = 40):
     return(full)
     
 def ufo_junk_group(max_rows = 500, max_items = 40):
-    # Random number of responsen
+    # Random number of responses
     n_resp=np.random.randint(20, max_rows, size=1)
     n_true=np.random.randint(n_resp/3, 2*n_resp/3, size=1)
     n_false = n_resp - n_true
@@ -148,7 +147,7 @@ def ufo_junk_group(max_rows = 500, max_items = 40):
     junk_ufo = pd.DataFrame(junk_ufo)
     junk_ufo.insert(0, 'Order', np.random.normal(
                                                     loc= ((np.random.random()*5*n_true)/6 + 1/6),
-                                                    scale=np.random.random()*n_true/6,
+                                                    scale=np.random.random()*n_true/4,
                                                     size=n_false
                                                     ))
 
