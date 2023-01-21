@@ -8,6 +8,7 @@ if __name__ == '__main__':
     dataset = pd.DataFrame()
     number_of_responses = 10000
 
+
     pool = multiprocessing.Pool(16)
     df = pd.DataFrame()
     data = pool.map(control_group, [500] * number_of_responses)
@@ -20,15 +21,10 @@ if __name__ == '__main__':
     print("Control group done")
 
 
-
     pool = multiprocessing.Pool(16)
-    df = pd.DataFrame()
     data = pool.map(random_junk_group, [500] * number_of_responses)
     pool.close()
     del pool
-
-    # concat
-
     list_df = [df]
     list_df.extend(data)
     df = pd.concat(list_df)
@@ -36,9 +32,7 @@ if __name__ == '__main__':
     print("Random junk group done")
 
 
-
     pool = multiprocessing.Pool(16)
-    df = pd.DataFrame()
     data = pool.map(flat_junk_group, [500] * number_of_responses)
     pool.close()
     del pool
@@ -46,18 +40,16 @@ if __name__ == '__main__':
     list_df.extend(data)
     df = pd.concat(list_df)
 
-
     print("Flat junk group done")
 
+
     pool = multiprocessing.Pool(16)
-    df = pd.DataFrame()
     data = pool.map(ufo_junk_group, [500] * number_of_responses)
     pool.close()
     del pool
     list_df = [df]
     list_df.extend(data)
     df = pd.concat(list_df)
-
 
     print("UFO junk group done")
 
