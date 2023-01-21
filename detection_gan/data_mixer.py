@@ -15,13 +15,13 @@ def data_mixer(real_data, fake_data):
     mixed_data = mixed_data[:, :-1]
     return mixed_data, labels
 
-# real_data = torch.randn((10, 10))
-# fake_data = torch.randn((10, 10))
+real_data = torch.randn((5, 5))
+fake_data = torch.randn((5, 5))
+labels = torch.tensor([1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0])
+mixed_data, labelsNew = data_mixer(real_data, fake_data)
 #
-# mixed_data, labelsNew = data_mixer(real_data, fake_data)
-#
-# print(real_data)
-# print(fake_data)
-# print(labels)
-# print(mixed_data)
-# print(labelsNew)
+print(real_data)
+print(fake_data)
+print(labels)
+print(mixed_data)
+print(labelsNew)
