@@ -18,7 +18,7 @@ def control_group(max_rows = 500, max_items = 40):
     b_symm = (b + b.T)/2
 
     # Matrix of responses
-    responses = rng.multivariate_normal(means, b_symm, check_valid="ignore", size=n_true)
+    responses = rng.multivariate_normal(means, b_symm, check_valid="ignore", size=n_true, method='eigh')
     responses = pd.DataFrame(responses)
     responses = np.pad(responses, pad_width=((0, max_rows - int(n_true)),(0,max_items - n)))
     responses = pd.DataFrame(responses)
@@ -44,7 +44,7 @@ def random_junk_group(max_rows = 500, max_items = 40):
     b_symm = (b + b.T)/2
 
     # Matrix of responses
-    responses = rng.multivariate_normal(means, b_symm, check_valid="ignore", size=n_true)
+    responses = rng.multivariate_normal(means, b_symm, check_valid="ignore", size=n_true, method='eigh')
     responses = pd.DataFrame(responses)
 
     # Add Order
@@ -90,20 +90,14 @@ def flat_junk_group(max_rows = 500, max_items = 40):
     b_symm = (b + b.T)/2
 
     # Matrix of responses
-    responses = rng.multivariate_normal(means, b_symm, check_valid="ignore", size=n_true)
+    responses = rng.multivariate_normal(means, b_symm, check_valid="ignore", size=n_true, method='eigh')
     responses = pd.DataFrame(responses)
 
     # Add Order
     responses.insert(0, 'Order', range(1, 1+len(responses)))
 
-    # Junk
-    # Random responses
-    b_random = np.eye(n)
-    junk_means = 2*np.random.random(size=n)-1
-    junk_random = rng.multivariate_normal(junk_means, b_random, check_valid="ignore", size=n_false)
-    junk_random = pd.DataFrame(junk_random)
-
     b_flat = np.ones([n, n])
+    junk_means = 2*np.random.random(size=n)-1
     junk_flat = rng.multivariate_normal(junk_means, b_flat, check_valid="ignore", size=n_false)
     junk_flat = pd.DataFrame(junk_flat)
     junk_flat.insert(0, 'Order', np.random.normal(
@@ -140,7 +134,7 @@ def ufo_junk_group(max_rows = 500, max_items = 40):
     b_symm = (b + b.T)/2
 
     # Matrix of responses
-    responses = rng.multivariate_normal(means, b_symm, check_valid="ignore", size=n_true)
+    responses = rng.multivariate_normal(means, b_symm, check_valid="ignore", size=n_true, method='eigh')
     responses = pd.DataFrame(responses)
 
     # Add Order
@@ -150,7 +144,7 @@ def ufo_junk_group(max_rows = 500, max_items = 40):
     b_ufo = 2*np.random.random(size=(n,n))-1
     b_symm_ufo = (b_ufo + b_ufo.T)/2
     means_ufo = 2*np.random.random(size=n)-1
-    junk_ufo = rng.multivariate_normal(means_ufo, b_symm_ufo, check_valid="ignore", size=n_false)
+    junk_ufo = rng.multivariate_normal(means_ufo, b_symm_ufo, check_valid="ignore", size=n_false, method='eigh')
     junk_ufo = pd.DataFrame(junk_ufo)
     junk_ufo.insert(0, 'Order', np.random.normal(
                                                     loc= ((np.random.random()*5*n_true)/6 + 1/6),

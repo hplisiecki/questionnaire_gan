@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 
 dataset = control_group()
-n= 1000
+n= 10
 
 
 for i in range(n-1):
@@ -18,4 +18,4 @@ for i in range(n):
 for i in range(n):
     dataset = pd.concat([dataset, ufo_junk_group()])
     
-dataset.to_csv("data/dataset.csv")
+print(dataset.shape)
