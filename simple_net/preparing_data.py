@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import pickle
 import os
-def prepare_data():
+def prepare_data(number_of_responses):
     if not os.path.exists(r'D:\data\data_hackaton\label_dict.pickle'):
         df = pd.read_csv(r'D:\data\data_hackaton\dataset.csv')
         label_dict = {label: idx for idx, label in enumerate(df['Set'].unique())}
@@ -10,8 +10,8 @@ def prepare_data():
         # del unnamed
         del df['Unnamed: 0'], df['Set']
         questionnaire_idx_list = []
-        for idx, i in enumerate(range(0, len(df), 500)):
-            questionnaire_idx_list.extend([idx]*500)
+        for idx, i in enumerate(range(0, len(df), number_of_responses)):
+            questionnaire_idx_list.extend([idx]*number_of_responses)
         df['questionnaire_idx'] = questionnaire_idx_list
         # split randomly
         unique_idx = df.questionnaire_idx.unique()
@@ -46,3 +46,11 @@ def prepare_data():
 
 
     return train_df, val_df, test_df, label_dict
+
+def load_test():
+    test_df = pd.read_csv(r'D:\data\data_hackaton\test.csv')
+    del test_df['Unnamed: 0']
+    with open(r'D:\data\data_hackaton\label_dict.pickle', 'rb') as handle:
+        label_dict = pickle.load(handle)
+
+    return test_df, label_dict

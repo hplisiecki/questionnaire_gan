@@ -7,15 +7,17 @@ from preparing_data import prepare_data
 import wandb
 from transformers import get_linear_schedule_with_warmup
 
-df_train, df_val, df_test, label_dict = prepare_data()
+number_of_responses = 100
+df_train, df_val, df_test, label_dict = prepare_data(number_of_responses)
 
-train, val, test = Dataset(df_train), Dataset(df_val), Dataset(df_test)
+train, val, test = Dataset(df_train, number_of_responses),\
+                   Dataset(df_val, number_of_responses), Dataset(df_test, number_of_responses)
 
 epochs = 100
 layer_list = [400, 400, 400, 400, 400, 400, 400]
-input_size = 500 * 40
-savedir = r'D:\data\data_hackaton\models\test'
-batch_size = 800
+input_size = number_of_responses * 40
+savedir = r'D:\data\data_hackaton\models\test_2_binary'
+batch_size = 10000
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 train_dataloader = torch.utils.data.DataLoader(train, batch_size=batch_size, shuffle=True)

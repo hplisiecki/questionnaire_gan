@@ -5,13 +5,13 @@ import torch
 
 class Dataset(torch.utils.data.Dataset):
 
-    def __init__(self, df):
+    def __init__(self, df, number_of_responses):
         self.training = False
         if 'label' in df.columns:
-            self.labels = [df['label'][i] for i in range(0, len(df), 500)]
+            self.labels = [df['label'][i] for i in range(0, len(df), number_of_responses)]
             self.training = True
 
-        self.matrices = [np.array(df.iloc[i:i+500, :-2]) for i in range(0, len(df), 500)]
+        self.matrices = [np.array(df.iloc[i:i+number_of_responses, :-2]) for i in range(0, len(df), number_of_responses)]
 
     def classes(self):
         return self.labels

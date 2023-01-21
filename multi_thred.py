@@ -6,12 +6,12 @@ import pandas as pd
 if __name__ == '__main__':
 
     dataset = pd.DataFrame()
-    number_of_responses = 10000
-
+    number_of_questionnaires = 50000
+    number_of_responses = 100
 
     pool = multiprocessing.Pool(16)
     df = pd.DataFrame()
-    data = pool.map(control_group, [500] * number_of_responses)
+    data = pool.map(control_group, [number_of_responses] * number_of_questionnaires)
     pool.close()
     del pool
     list_df = [df]
@@ -22,7 +22,7 @@ if __name__ == '__main__':
 
 
     pool = multiprocessing.Pool(16)
-    data = pool.map(random_junk_group, [500] * number_of_responses)
+    data = pool.map(random_junk_group, [number_of_responses] * number_of_questionnaires)
     pool.close()
     del pool
     list_df = [df]
@@ -33,7 +33,7 @@ if __name__ == '__main__':
 
 
     pool = multiprocessing.Pool(16)
-    data = pool.map(flat_junk_group, [500] * number_of_responses)
+    data = pool.map(flat_junk_group, [number_of_responses] * number_of_questionnaires)
     pool.close()
     del pool
     list_df = [df]
@@ -44,7 +44,7 @@ if __name__ == '__main__':
 
 
     pool = multiprocessing.Pool(16)
-    data = pool.map(ufo_junk_group, [500] * number_of_responses)
+    data = pool.map(ufo_junk_group, [number_of_responses] * number_of_questionnaires)
     pool.close()
     del pool
     list_df = [df]
