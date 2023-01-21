@@ -1,6 +1,7 @@
 import torch
 import numpy as np
 
+# generator and discriminator
 class Generator(torch.nn.Module):
     def __init__(self, layer_sizes, output_size):
         super(Generator, self).__init__()
@@ -13,6 +14,9 @@ class Generator(torch.nn.Module):
         self.output_size = output_size
     
     def forward(self, x, scales):
+        scalesM = torch.zeros(self.input_size)
+        scalesM[:scales.shape[0], :scales.shape[1]] = scales
+        x = torch.cat((x, scalesM), axis=0)
         for idx, layer_dim in enumerate(self.layer_sizes[:-1]):
             if idx == 0:
                 continue
@@ -32,6 +36,9 @@ class Discriminator(torch.nn.Module):
         self.output_size = output_size
     
     def forward(self, x, scales):
+        scalesM = torch.zeros(self.input_size)
+        scalesM[:scales.shape[0], :scales.shape[1]] = scales
+        x = torch.cat((x, scalesM), axis=0)
         for idx, layer_dim in enumerate(self.layer_sizes[:-1]):
             if idx == 0:
                 continue
