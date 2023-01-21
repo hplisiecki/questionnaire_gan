@@ -1,23 +1,27 @@
 import torch
 import numpy.random as random
 
-def data_mixer(real_data, fake_data, labels):
+def data_mixer(real_data, fake_data):
     # mix real and fake data
+    ones = torch.ones(real_data.shape[0])
+    zeros = torch.zeros(fake_data.shape[0])
+    labels = torch.cat((ones, zeros), 0)
     mixed_data = torch.cat((real_data, fake_data), dim=0)
-    mixed_data = torch.cat((mixed_data, labels), dim1=1)
-    mixed_data = random.shuffle(mixed_data, lambda: random.poisson(2, mixed_data.shape[0]))
-    labels = torch.split(mixed_data, )
-    
+    labels = labels.view(-1, 1)
+    mixed_data = torch.cat((mixed_data, labels), dim=1)
+    # shuffle
+    mixed_data = mixed_data[torch.randperm(mixed_data.size()[0])]
+    labels = mixed_data[:, -1]
+    mixed_data = mixed_data[:, :-1]
     return mixed_data, labels
 
-real_data = torch.randn((10, 10))
-fake_data = torch.randn((10, 10))
-labels = torch.tensor([1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0])
-
-mixed_data, labelsNew = data_mixer(real_data, fake_data, labels)
-
-print(real_data)
-print(fake_data)
-print(labels)
-print(mixed_data)
-print(labelsNew)
+# real_data = torch.randn((10, 10))
+# fake_data = torch.randn((10, 10))
+#
+# mixed_data, labelsNew = data_mixer(real_data, fake_data)
+#
+# print(real_data)
+# print(fake_data)
+# print(labels)
+# print(mixed_data)
+# print(labelsNew)
