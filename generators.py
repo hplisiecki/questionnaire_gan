@@ -29,7 +29,7 @@ def control_group(max_rows = 500, max_items = 40):
 def random_junk_group(max_rows = 500, max_items = 40):
     # Random number of responses
     n_resp=np.random.randint(20, max_rows, size=1)
-    n_true=np.random.randint(0, n_resp, size=1)
+    n_true=np.random.randint(n_resp/3, 2*n_resp/3, size=1)
     n_false = n_resp - n_true
 
     # Random number of items
@@ -59,7 +59,7 @@ def random_junk_group(max_rows = 500, max_items = 40):
 
     junk_random.insert(0, 'Order', np.random.normal(
                                                     loc= ((np.random.random()*5*n_true)/6 + 1/6),
-                                                    scale=np.random.random()*n_true/4,
+                                                    scale=np.random.random()*n_true/6,
                                                     size=n_false
                                                     ))
     
@@ -74,7 +74,7 @@ def random_junk_group(max_rows = 500, max_items = 40):
 def flat_junk_group(max_rows = 500, max_items = 40):
     # Random number of responsen
     n_resp=np.random.randint(20, max_rows, size=1)
-    n_true=np.random.randint(0, n_resp, size=1)
+    n_true=np.random.randint(n_resp/3, 2*n_resp/3, size=1)
     n_false = n_resp - n_true
 
     # Random number of items
@@ -102,7 +102,7 @@ def flat_junk_group(max_rows = 500, max_items = 40):
     junk_flat = pd.DataFrame(junk_flat)
     junk_flat.insert(0, 'Order', np.random.normal(
                                                     loc= ((np.random.random()*5*n_true)/6 + 1/6),
-                                                    scale=np.random.random()*n_true/4,
+                                                    scale=np.random.random()*n_true/6,
                                                     size=n_false
                                                     ))
     
@@ -118,7 +118,7 @@ def flat_junk_group(max_rows = 500, max_items = 40):
 def ufo_junk_group(max_rows = 500, max_items = 40):
     # Random number of responsen
     n_resp=np.random.randint(20, max_rows, size=1)
-    n_true=np.random.randint(0, n_resp, size=1)
+    n_true=np.random.randint(n_resp/3, 2*n_resp/3, size=1)
     n_false = n_resp - n_true
 
     # Random number of items
@@ -148,7 +148,7 @@ def ufo_junk_group(max_rows = 500, max_items = 40):
     junk_ufo = pd.DataFrame(junk_ufo)
     junk_ufo.insert(0, 'Order', np.random.normal(
                                                     loc= ((np.random.random()*5*n_true)/6 + 1/6),
-                                                    scale=np.random.random()*n_true/4,
+                                                    scale=np.random.random()*n_true/6,
                                                     size=n_false
                                                     ))
 
