@@ -3,7 +3,7 @@ rng = np.random.default_rng()
 import pandas as pd
 
 def control_group(max_rows = 500, max_items = 40):
-    # Random number of responsen
+    # Random number of responses
     n_true=np.random.randint(0, max_rows, size=1)
 
     # Random number of items
@@ -27,7 +27,7 @@ def control_group(max_rows = 500, max_items = 40):
     return(responses)
 
 def random_junk_group(max_rows = 500, max_items = 40):
-    # Random number of responsen
+    # Random number of responses
     n_resp=np.random.randint(20, max_rows, size=1)
     n_true=np.random.randint(0, n_resp, size=1)
     n_false = n_resp - n_true
