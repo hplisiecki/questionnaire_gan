@@ -1,5 +1,6 @@
 # load
 import pickle
+import numpy as np
 from detection_gan.utils import sampling_from_survey
 
 with open(r'D:\data\surveys\survey_list.pickle', 'rb') as handle:
@@ -11,8 +12,8 @@ with open(r'D:\data\surveys\length_survey_list.pickle', 'rb') as handle:
 with open(r'D:\data\surveys\length_answer_list.pickle', 'rb') as handle:
     length_answer_list = pickle.load(handle)
 
-def real_dataloader(batch_size, device):
-    # sample 1000 surveys
+def real_dataloader(batch_size):
+    # sample 10000 surveys
     # weighted sampling according to length_answer_list
 
 
@@ -30,13 +31,16 @@ def real_dataloader(batch_size, device):
     #     a = sampling_from_survey(i[0], i[1])
 
     survey_tuples = [(sampling_from_survey(survey_tuple[0], survey_tuple[1])) for survey_tuple in survey_tuples]
-    surveys = [survey_tuple[0] for survey_tuple in survey_tuples]
-    scales = [survey_tuple[1] for survey_tuple in survey_tuples]
-    # limit the length of the surveys to 100x40
-    surveys = [survey[:100, :40] for survey in surveys]
-    surveys = [np.pad(survey, ((0, 100-survey.shape[0]), (0, 40-survey.shape[1])), 'constant') for survey in surveys]
 
-    return surveys, scales
+    # limit the length of the surveys to 100x40
+    survey_tuples = [(survey[:100, :40], scale[:40]) for survey, scale in survey_tuples]
+    survey_tuples = [(np.pad(survey, ((0, 100-survey.shape[0]), (0, 40-survey.shape[1])), 'constant'), np.pad(scale, (0, 40-scale.shape[0]), 'constant')) for survey, scale in survey_tuples]
+
+    # batch the surveys
+    batches = []
+    for i in range(0, len(survey_tuples), batch_size):
+        batches.append(survey_tuples[i:i+batch_size])
+    return batches
 
 
 

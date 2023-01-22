@@ -24,15 +24,18 @@ test_dataloader = torch.utils.data.DataLoader(test, batch_size=batch_size)
 predictions = []
 reals = []
 model.eval()
+probs = []
 for test_input, test_label in test_dataloader:
     test_label = test_label.to(device).long()
     # train input are vectors
     test_input = test_input.to(device).float()
     output = model(test_input)
+    probs.extend(output.tolist())
     _, pred = torch.max(output, dim=1)
     predictions.extend(pred.tolist())
     reals.extend(test_label.tolist())
 
+acc = sum([1 if predictions[i] == reals[i] else 0 for i in range(len(predictions))]) / len(predictions)
 # reverse
 label_dict = {v: k for k, v in label_dict.items()}
 prediction_name = [label_dict[pred] for pred in predictions]

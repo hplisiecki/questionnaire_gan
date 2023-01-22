@@ -14,6 +14,7 @@ class Generator(torch.nn.Module):
         self.output_size = output_size
     
     def forward(self, x, scales):
+        x = torch.cat((x, scales), dim=1)
         for idx, layer_dim in enumerate(self.layer_sizes[:-1]):
             if idx == 0:
                 continue
@@ -22,7 +23,7 @@ class Generator(torch.nn.Module):
         return x
 
 class Discriminator(torch.nn.Module):
-    def __init__(self, layer_sizes, output_size):
+    def __init__(self, layer_sizes, output_size, scales_size):
         layer_sizes[0] = layer_sizes[0] + scales_size
         super(Discriminator, self).__init__()
         for idx, layer_dim in enumerate(layer_sizes):
@@ -34,6 +35,7 @@ class Discriminator(torch.nn.Module):
         self.output_size = output_size
     
     def forward(self, x, scales):
+        x = torch.cat((x, scales), dim=1)
         for idx, layer_dim in enumerate(self.layer_sizes[:-1]):
             if idx == 0:
                 continue
