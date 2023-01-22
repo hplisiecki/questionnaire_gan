@@ -35,6 +35,19 @@ for test_input, test_label in test_dataloader:
     predictions.extend(pred.tolist())
     reals.extend(test_label.tolist())
 
+import pickle
+with open(r'results\probs.pkl', 'wb') as f:
+    pickle.dump(probs, f)
+
+with open(r'results\predictions.pkl', 'wb') as f:
+    pickle.dump(predictions, f)
+
+with open(r'results\reals.pkl', 'wb') as f:
+    pickle.dump(reals, f)
+
+
+
+
 acc = sum([1 if predictions[i] == reals[i] else 0 for i in range(len(predictions))]) / len(predictions)
 # reverse
 label_dict = {v: k for k, v in label_dict.items()}

@@ -1,13 +1,15 @@
 import torch
 import numpy.random as random
 
-def data_mixer(real_data, fake_data):
+def data_mixer(real_data, fake_data, device):
     # mix real and fake data
     ones = torch.ones(real_data.shape[0])
     zeros = torch.zeros(fake_data.shape[0])
     labels = torch.cat((ones, zeros), 0)
     mixed_data = torch.cat((real_data, fake_data), dim=0)
-    labels = labels.view(-1, 1)
+    labels = labels.view(-1, 100, 40)
+    labels = labels.to(device)
+    print(mixed_data.shape)
     mixed_data = torch.cat((mixed_data, labels), dim=1)
     # shuffle
     mixed_data = mixed_data[torch.randperm(mixed_data.size()[0])]

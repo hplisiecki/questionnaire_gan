@@ -8,12 +8,12 @@ import torch
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
-layer_sizes = [100, 500, 1000, 2000]
+layer_sizes = [100, 500, 1000, 2000, 4000]
 
-generator = Generator(layer_sizes, 4000, 40)
+generator = Generator(layer_sizes, 40)
 
-layer_sizes = [2000, 1000, 500, 100]
-discriminator = Discriminator(layer_sizes, 1, 40)
+layer_sizes = [4000, 2000, 500, 100, 1]
+discriminator = Discriminator(layer_sizes, 40)
 
 generator = generator.to(device)
 discriminator = discriminator.to(device)

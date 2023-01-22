@@ -13,18 +13,17 @@ def training_loop(generator, discriminator, epochs, batch_size, device, save_dir
     for epoch in range(epochs):
         real_batches = real_dataloader(batch_size)
         for n_critic in tqdm(range(critic_range)):
-            for batch in real_batches:
-                real_surveys = [b[0] for b in batch]
-                real_scales = [b[1] for b in batch]
-                # to tensor, to device
-                real_surveys = torch.tensor(real_surveys).to(device)
-                real_scales = torch.tensor(real_scales).to(device)
-                z = torch.randn(batch_size, 100, 1, 1, device=device)
+            for inputs, scales in real_batches:
+                inputs = torch.tensor(inputs).to(device)
+                real_scales = torch.tensor(scales).to(device).to(torch.float32)
+
+                z = torch.randn(batch_size, 100).to(device)
 
                 # generate some fake data
                 fake_data = generator(z, real_scales)
-                # train discriminator on fake data
-                mixed_data, labels = data_mixer(real_surveys, fake_data)
+
+                fake_data = fake_data.view(batch_size, -1, 40)
+                mixed_data, labels = data_mixer(inputs, fake_data, device)
 
                 discriminator_output = discriminator(mixed_data, real_scales)
                 discriminator_loss = criterion(discriminator_output, labels)

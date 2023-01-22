@@ -36,10 +36,11 @@ def real_dataloader(batch_size):
     survey_tuples = [(survey[:100, :40], scale[:40]) for survey, scale in survey_tuples]
     survey_tuples = [(np.pad(survey, ((0, 100-survey.shape[0]), (0, 40-survey.shape[1])), 'constant'), np.pad(scale, (0, 40-scale.shape[0]), 'constant')) for survey, scale in survey_tuples]
 
-    # batch the surveys
-    batches = []
-    for i in range(0, len(survey_tuples), batch_size):
-        batches.append(survey_tuples[i:i+batch_size])
+    surveys = np.array([survey for survey, scale in survey_tuples])
+    scales = np.array([scale for survey, scale in survey_tuples])
+
+    batches = [ (surveys[i:i+batch_size], scales[i:i+batch_size]) for i in range(0, len(surveys), batch_size)]
+
     return batches
 
 
