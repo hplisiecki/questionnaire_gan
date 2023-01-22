@@ -15,6 +15,7 @@ def get_delimiter(file_path, bytes = 4096):
 
 def cleanup_frame(df):
     scales = []
+    df.dropna(how='all', inplace=True)
     for col in df.columns:
         le = preprocessing.LabelEncoder()
         df[col] = le.fit_transform(df[col])
