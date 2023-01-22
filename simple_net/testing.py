@@ -8,11 +8,11 @@ df_test, label_dict = load_test()
 
 number_of_responses = 100
 test = Dataset(df_test, number_of_responses)
-layer_list = [400, 400, 400, 400, 400, 400, 400]
+layer_list = [800, 800, 800, 800]
 input_size = number_of_responses * 40
 
 model = Simple_Net(0.3, input_size, layer_list, len(label_dict))
-model.load_state_dict(torch.load(r'D:\data\data_hackaton\models\test'))
+model.load_state_dict(torch.load(r'D:\data\data_hackaton\models\test_8'))
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 

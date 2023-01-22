@@ -47,6 +47,24 @@ def prepare_data(number_of_responses):
 
     return train_df, val_df, test_df, label_dict
 
+def prepare_second_data(number_of_responses):
+    df = pd.read_csv(r'D:\data\data_hackaton\dataset_2.csv')
+    with open(r'D:\data\data_hackaton\label_dict.pickle', 'rb') as handle:
+        label_dict = pickle.load(handle)
+
+    df['label'] = df['Set'].map(label_dict)
+    del df['Unnamed: 0'], df['Set']
+    questionnaire_idx_list = []
+    for idx, i in enumerate(range(0, len(df), number_of_responses)):
+        questionnaire_idx_list.extend([idx] * number_of_responses)
+    df['questionnaire_idx'] = questionnaire_idx_list
+
+    val_df = pd.read_csv(r'D:\data\data_hackaton\val.csv')
+    del val_df['Unnamed: 0']
+
+    return df, val_df, label_dict
+
+
 def load_test():
     test_df = pd.read_csv(r'D:\data\data_hackaton\test.csv')
     del test_df['Unnamed: 0']
