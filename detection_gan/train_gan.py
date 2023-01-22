@@ -19,14 +19,14 @@ generator = generator.to(device)
 discriminator = discriminator.to(device)
 
 optimizer_generator = torch.optim.AdamW(generator.parameters(),
-                    lr=5e-5,
+                    lr=5e-4,
                     eps=1e-8,  # Epsilon
                     weight_decay=0.3,
                     amsgrad=True,
                     betas = (0.9, 0.999))
 
 optimizer_discriminator = torch.optim.AdamW(discriminator.parameters(),
-                    lr=5e-5,
+                    lr=5e-4,
                     eps=1e-8,  # Epsilon
                     weight_decay=0.3,
                     amsgrad=True,
@@ -40,11 +40,11 @@ batch_size = 1000
 
 scheduler_generator = get_linear_schedule_with_warmup(optimizer_generator,
                                             num_warmup_steps=500,
-                                            num_training_steps= 10000 * epochs)
+                                            num_training_steps= 4000 * epochs)
 
 scheduler_discriminator = get_linear_schedule_with_warmup(optimizer_discriminator,
                                             num_warmup_steps=500,
-                                            num_training_steps= 10000 * epochs)
+                                            num_training_steps= 4000 * epochs)
 
 
 

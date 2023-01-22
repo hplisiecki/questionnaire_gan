@@ -1,13 +1,19 @@
 import numpy as np
-
+import torch
 def box_numbers(numbers, response_scale):
     '''
+    numbers - a flat cuda tensor of numbers
+    response_scale - a flat cuda tensor of the response scale
     n: [0.1, 0.6, 0.9, 0.3, 0.09, 0.2, 0.1, 0,  0]
     s: [7,   5,   3,   10,  10,   10,  10,  10, 5]
     o: [1    3    3    3    1     2    1    0   0]
     '''
-    return np.array(list(map(lambda x: np.digitize(x[0], np.linspace(0.0, 1, num=x[1]+1), right=True), zip(numbers, response_scale))))
+    # bucketize
+    bucketized_numbers = (torch.floor(torch.abs((numbers * response_scale) - 1)) + 1) / response_scale
+    # replace infinities with 0
+    bucketized_numbers = torch.where(torch.isinf(bucketized_numbers), torch.zeros_like(bucketized_numbers), bucketized_numbers)
 
+    return bucketized_numbers
 
 def sampling_from_survey(three_d_array, scales):
     if three_d_array.shape[1] > 1:

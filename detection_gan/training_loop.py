@@ -21,8 +21,6 @@ def training_loop(generator, discriminator, epochs, batch_size, device, save_dir
 
                 # generate some fake data
                 fake_data = generator(z, real_scales)
-                print(fake_data.shape)
-                print(torch.flatten(real_scales).shape)
                 new_scale = torch.cat([torch.flatten(i.repeat(100, 1)) for i in real_scales]).to(device)
                 fake_data = box_numbers(torch.flatten(fake_data), new_scale)
 
@@ -37,7 +35,7 @@ def training_loop(generator, discriminator, epochs, batch_size, device, save_dir
                 discriminator_loss.backward()
                 optimizer_discriminator.step()
                 optimizer_discriminator.zero_grad()
-                if idx % n_critic == 0:
+                if idx % critic_range == 0:
                     scheduler_disc.step()
 
 
@@ -49,6 +47,9 @@ def training_loop(generator, discriminator, epochs, batch_size, device, save_dir
 
             z = torch.randn(batch_size, 100).to(device)
             fake_data = generator(z, real_scales)
+            fake_data = fake_data.view(batch_size, -1, 40)
+            new_scale = torch.cat([torch.flatten(i.repeat(100, 1)) for i in real_scales]).to(device)
+            fake_data = box_numbers(torch.flatten(fake_data), new_scale)
             fake_data = fake_data.view(batch_size, -1, 40)
             mixed_data, labels = data_mixer(inputs, fake_data, device)
             mixed_data = mixed_data.to(torch.float32)
@@ -65,7 +66,7 @@ def training_loop(generator, discriminator, epochs, batch_size, device, save_dir
             optimizer_generator.zero_grad()
             scheduler_gen.step()
 
-        if epoch % 2 == 0:
+        if epoch % 1 == 0:
             wandb.log({"Generator Loss": generator_loss,
                        "Discriminator Loss": discriminator_loss})
 
