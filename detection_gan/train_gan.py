@@ -12,30 +12,30 @@ layer_sizes = [100, 500, 1000, 2000, 4000]
 
 generator = Generator(layer_sizes, 40)
 
-layer_sizes = [4000, 2000, 500, 100, 1]
+layer_sizes = [4000, 2000, 1000, 500, 100]
 discriminator = Discriminator(layer_sizes, 40)
 
 generator = generator.to(device)
 discriminator = discriminator.to(device)
 
 optimizer_generator = torch.optim.AdamW(generator.parameters(),
-                    lr=5e-4,
+                    lr=5e-5,
                     eps=1e-8,  # Epsilon
                     weight_decay=0.3,
                     amsgrad=True,
                     betas = (0.9, 0.999))
 
 optimizer_discriminator = torch.optim.AdamW(discriminator.parameters(),
-                    lr=5e-4,
+                    lr=5e-5,
                     eps=1e-8,  # Epsilon
                     weight_decay=0.3,
                     amsgrad=True,
                     betas = (0.9, 0.999))
 
 criterion = torch.nn.BCELoss()
-critic_range = 3
+critic_range = 2
 save_dir = r'D:\GitHub\ergodicity_1991\detection_gan\models\test_1'
-epochs = 10
+epochs = 100000
 batch_size = 1000
 
 scheduler_generator = get_linear_schedule_with_warmup(optimizer_generator,

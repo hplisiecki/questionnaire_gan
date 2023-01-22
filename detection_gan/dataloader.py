@@ -12,6 +12,8 @@ with open(r'D:\data\surveys\length_survey_list.pickle', 'rb') as handle:
 with open(r'D:\data\surveys\length_answer_list.pickle', 'rb') as handle:
     length_answer_list = pickle.load(handle)
 
+survey_list = [((survey + 1 )/ scale, scale) for survey, scale in survey_list]
+
 def real_dataloader(batch_size):
     # sample 10000 surveys
     # weighted sampling according to length_answer_list
@@ -21,7 +23,7 @@ def real_dataloader(batch_size):
     prob_distribution = prob_distribution ** 0.25
     prob_distribution = prob_distribution / np.sum(prob_distribution)
 
-    indexes = np.random.choice(len(survey_list), 1000, p=prob_distribution )
+    indexes = np.random.choice(len(survey_list), 4000, p=prob_distribution )
 
     survey_tuples = [survey_list[index] for index in indexes]
 

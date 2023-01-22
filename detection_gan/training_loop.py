@@ -4,7 +4,7 @@ import wandb
 from dataloader import real_dataloader
 import wandb
 from tqdm import tqdm
-
+from utils import box_numbers
 def training_loop(generator, discriminator, epochs, batch_size, device, save_dir,
                     optimizer_generator, optimizer_discriminator, criterion, scheduler_gen, scheduler_disc,
                   critic_range):
@@ -13,7 +13,7 @@ def training_loop(generator, discriminator, epochs, batch_size, device, save_dir
     for epoch in range(epochs):
         real_batches = real_dataloader(batch_size)
         for n_critic in tqdm(range(critic_range)):
-            for inputs, scales in real_batches:
+            for idx, (inputs, scales) in enumerate(real_batches):
                 inputs = torch.tensor(inputs).to(device)
                 real_scales = torch.tensor(scales).to(device).to(torch.float32)
 
@@ -21,29 +21,43 @@ def training_loop(generator, discriminator, epochs, batch_size, device, save_dir
 
                 # generate some fake data
                 fake_data = generator(z, real_scales)
+                print(fake_data.shape)
+                print(torch.flatten(real_scales).shape)
+                new_scale = torch.cat([torch.flatten(i.repeat(100, 1)) for i in real_scales]).to(device)
+                fake_data = box_numbers(torch.flatten(fake_data), new_scale)
 
                 fake_data = fake_data.view(batch_size, -1, 40)
                 mixed_data, labels = data_mixer(inputs, fake_data, device)
+                mixed_data = mixed_data.to(torch.float32)
+                double_scales = torch.cat((real_scales, real_scales), dim=0).view(-1, 1, 40)
 
-                discriminator_output = discriminator(mixed_data, real_scales)
+                discriminator_output = discriminator(mixed_data, double_scales)
+                labels = labels.to(torch.float32)
                 discriminator_loss = criterion(discriminator_output, labels)
                 discriminator_loss.backward()
                 optimizer_discriminator.step()
                 optimizer_discriminator.zero_grad()
-                scheduler_disc.step()
+                if idx % n_critic == 0:
+                    scheduler_disc.step()
 
 
         # train generator
-        for real_surveys, real_scales in tqdm(real_dataloader):
+        for inputs, scales in real_batches:
             # to tensor, to device
-            real_surveys = torch.tensor(real_surveys).to(device)
-            real_scales = torch.tensor(real_scales).to(device)
-            z = torch.randn(batch_size, 100, 1, 1, device=device)
-            fake_data = generator(z)
-            mixed_data, labels = data_mixer(real_surveys, fake_data)
+            inputs = torch.tensor(inputs).to(device)
+            real_scales = torch.tensor(scales).to(device).to(torch.float32)
+
+            z = torch.randn(batch_size, 100).to(device)
+            fake_data = generator(z, real_scales)
+            fake_data = fake_data.view(batch_size, -1, 40)
+            mixed_data, labels = data_mixer(inputs, fake_data, device)
+            mixed_data = mixed_data.to(torch.float32)
+            double_scales = torch.cat((real_scales, real_scales), dim=0).view(-1, 1, 40)
             # reverse labels
-            labels = [1 if label == 0 else 0 for label in labels]
-            discriminator_output = discriminator(real_surveys, real_scales)
+            labels = torch.abs(labels - 1)
+            labels = labels.to(torch.float32)
+
+            discriminator_output = discriminator(mixed_data, double_scales)
             generator_loss = criterion(discriminator_output, labels)
 
             generator_loss.backward()

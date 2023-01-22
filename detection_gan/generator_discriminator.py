@@ -29,10 +29,13 @@ class Discriminator(torch.nn.Module):
                 continue
             setattr(self, f'linear_{idx}', torch.nn.Linear(layer_sizes[idx], layer_sizes[idx + 1]))
 
+        self.flatten = torch.nn.Flatten()
+
         self.layer_sizes = layer_sizes
 
     def forward(self, x, scales):
         x = torch.cat((x, scales), dim=1)
+        x = self.flatten(x)
         for idx, layer_dim in enumerate(self.layer_sizes):
             if idx == len(self.layer_sizes) - 2:
                 break
