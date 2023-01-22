@@ -4,7 +4,7 @@ import pandas as pd
 from tqdm import tqdm
 
 dataset = control_group()
-n= 1000
+n= 10
 
 
 for i in tqdm(range(n-1)):
