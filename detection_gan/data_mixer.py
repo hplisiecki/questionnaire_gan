@@ -10,7 +10,9 @@ def data_mixer(real_data, fake_data, device):
     labels = labels.view(-1, 100, 1)
     mixed_data = torch.cat((mixed_data, labels), dim=2)
     # shuffle
+    mixed_data = mixed_data.view(-1, 41)
     mixed_data = mixed_data[torch.randperm(mixed_data.size()[0])]
+    mixed_data = mixed_data.view(-1, 100, 41)
     labels = mixed_data[:, :, -1]
     mixed_data = mixed_data[:, :, :-1]
     return mixed_data, labels

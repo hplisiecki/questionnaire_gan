@@ -1,18 +1,19 @@
 import sys
-sys.path.insert(0, r'D:\GitHub\ergodicity_1991\detection_gan')
+sys.path.insert(0, r'D:\GitHub\questionnaire_gan\detection_gan')
 from training_loop import training_loop
 from generator_discriminator import Generator, Discriminator
 from transformers import get_linear_schedule_with_warmup
 import wandb
 import torch
-
+import os
+os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
-layer_sizes = [100, 500, 1000, 2000, 4000]
+layer_sizes = [100, 500, 1000, 2000, 3000, 4000]
 
 generator = Generator(layer_sizes, 40)
 
-layer_sizes = [4000, 2000, 1000, 500, 100]
+layer_sizes = [4000, 3000, 2000, 1000, 500, 100]
 discriminator = Discriminator(layer_sizes, 40)
 
 generator = generator.to(device)
@@ -34,7 +35,7 @@ optimizer_discriminator = torch.optim.AdamW(discriminator.parameters(),
 
 criterion = torch.nn.BCELoss()
 critic_range = 2
-save_dir = r'D:\GitHub\ergodicity_1991\detection_gan\models\test_1'
+save_dir = r'D:\GitHub\questionnaire_gan\detection_gan\models\test_4'
 epochs = 100000
 batch_size = 1000
 

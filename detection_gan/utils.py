@@ -4,14 +4,18 @@ def box_numbers(numbers, response_scale):
     '''
     numbers - a flat cuda tensor of numbers
     response_scale - a flat cuda tensor of the response scale
-    n: [0.1, 0.6, 0.9, 0.3, 0.09, 0.2, 0.1, 0,  0]
+    n: [0.1, 0.6, 0.9, 0.3, 0.9, 0.2, 0.1, 0,  0]
     s: [7,   5,   3,   10,  10,   10,  10,  10, 5]
-    o: [1    3    3    3    1     2    1    0   0]
+    o: [1    3    3    3    10     2    1    0   0]
     '''
     # bucketize
-    bucketized_numbers = (torch.floor(torch.abs((numbers * response_scale) - 1)) + 1) / response_scale
+    scale_numbers = (numbers * response_scale)
+    # change zeros to inf
+    modify_numbers = torch.where(scale_numbers ==0, torch.inf, scale_numbers)
+    rounded_numbers = torch.round(modify_numbers)
+    scaled_buckets = rounded_numbers / response_scale
     # replace infinities with 0
-    bucketized_numbers = torch.where(torch.isinf(bucketized_numbers), torch.zeros_like(bucketized_numbers), bucketized_numbers)
+    bucketized_numbers = torch.where(torch.isinf(scaled_buckets), torch.zeros_like(scaled_buckets), scaled_buckets)
 
     return bucketized_numbers
 

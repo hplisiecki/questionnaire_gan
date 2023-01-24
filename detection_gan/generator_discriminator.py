@@ -17,7 +17,7 @@ class Generator(torch.nn.Module):
             if idx == len(self.layer_sizes) - 2:
                 break
             x = torch.nn.functional.relu(getattr(self, f'linear_{idx}')(x))
-        x = torch.nn.functional.sigmoid(getattr(self, f'linear_{len(self.layer_sizes) - 2}')(x))
+        x = torch.sigmoid(getattr(self, f'linear_{len(self.layer_sizes) - 2}')(x))
         return x
 
 class Discriminator(torch.nn.Module):
@@ -40,5 +40,5 @@ class Discriminator(torch.nn.Module):
             if idx == len(self.layer_sizes) - 2:
                 break
             x = torch.nn.functional.relu(getattr(self, f'linear_{idx}')(x))
-        x = torch.nn.functional.sigmoid(getattr(self, f'linear_{len(self.layer_sizes) - 2}')(x))
+        x = torch.sigmoid(getattr(self, f'linear_{len(self.layer_sizes) - 2}')(x))
         return x
