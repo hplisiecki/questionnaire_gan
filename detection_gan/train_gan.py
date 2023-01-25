@@ -10,9 +10,11 @@ os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 layer_sizes = [100, 500, 1000, 2000, 3000, 4000]
+# layer_sizes = [100, 2000, 4000]
 
 generator = Generator(layer_sizes, 40)
 
+# layer_sizes = [4000, 2000, 100]
 layer_sizes = [4000, 3000, 2000, 1000, 500, 100]
 discriminator = Discriminator(layer_sizes, 40)
 
@@ -34,10 +36,14 @@ optimizer_discriminator = torch.optim.AdamW(discriminator.parameters(),
                     betas = (0.9, 0.999))
 
 criterion = torch.nn.BCELoss()
-critic_range = 2
-save_dir = r'D:\GitHub\questionnaire_gan\detection_gan\models\test_4'
+critic_range = 5
+save_dir = r'D:\GitHub\questionnaire_gan\detection_gan\models\test_8'
 epochs = 100000
 batch_size = 1000
+
+# load
+# generator.load_state_dict(torch.load(r'D:\GitHub\questionnaire_gan\detection_gan\models\test_6generator'))
+# discriminator.load_state_dict(torch.load(r'D:\GitHub\questionnaire_gan\detection_gan\models\test_6discriminator'))
 
 scheduler_generator = get_linear_schedule_with_warmup(optimizer_generator,
                                             num_warmup_steps=500,

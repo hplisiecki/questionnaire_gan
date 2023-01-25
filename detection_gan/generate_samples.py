@@ -45,6 +45,7 @@ new_scale = torch.cat([torch.flatten(i.repeat(100, 1)) for i in scales]).to(devi
 
 fake_data = box_numbers(torch.flatten(fake_data), new_scale)
 fake_data = fake_data.view(batch_size, -1, 40)
+real_data = inputs
 mixed_data, labels = data_mixer(inputs, fake_data, device)
 mixed_data = mixed_data.to(torch.float32)
 double_scales = torch.cat((real_scales, real_scales), dim=0).view(-1, 1, 40)

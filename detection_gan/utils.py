@@ -13,8 +13,7 @@ def box_numbers(numbers, response_scale):
     # change zeros to inf
     modify_numbers = torch.where(scale_numbers ==0, torch.inf, scale_numbers)
     rounded_numbers = torch.round(modify_numbers)
-    scaled_buckets = rounded_numbers / response_scale
-    # replace infinities with 0
+    scaled_buckets = (rounded_numbers / response_scale)
     bucketized_numbers = torch.where(torch.isinf(scaled_buckets), torch.zeros_like(scaled_buckets), scaled_buckets)
 
     return bucketized_numbers

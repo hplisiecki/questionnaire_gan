@@ -45,5 +45,8 @@ def real_dataloader(batch_size):
 
     return batches
 
-
+def load_data(id):
+    with open(r'D:\data\data_hackaton\gan_data\data_{}.pkl'.format(id), 'rb') as f:
+        data = pickle.load(f)
+    return data
 
