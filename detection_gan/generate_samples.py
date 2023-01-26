@@ -16,7 +16,7 @@ import numpy as np
 # layer_sizes = [100, 500, 1000, 2000, 3000, 4000] 2
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-layer_sizes = [100, 4000]
+layer_sizes = [100, 500, 1000, 2000, 3000, 4000]
 
 generator = Generator(layer_sizes, 40)
 layer_sizes = [4000, 3000, 2000, 1000, 500, 100]
@@ -25,8 +25,8 @@ discriminator = Discriminator(layer_sizes, 40)
 
 
 # load
-generator.load_state_dict(torch.load(r'D:\GitHub\questionnaire_gan\detection_gan\models\test_3generator'))
-discriminator.load_state_dict(torch.load(r'D:\GitHub\questionnaire_gan\detection_gan\models\test_3discriminator'))
+generator.load_state_dict(torch.load(r'D:\GitHub\questionnaire_gan\detection_gan\models\test_7generator'))
+discriminator.load_state_dict(torch.load(r'D:\GitHub\questionnaire_gan\detection_gan\models\test_7discriminator'))
 discriminator.to(device)
 generator.to(device)
 batch_size = 100
@@ -36,7 +36,8 @@ batch = real_batches[0]
 inputs = torch.tensor(batch[0]).to(device)
 real_scales = torch.tensor(batch[1]).to(device).to(torch.float32)
 z = torch.randn(batch_size, 100).to(device)
-scales = [3] * 40
+scales = [3] * 20
+scales.extend([0] * 20)
 scales = torch.Tensor(scales).to(device).view(1,-1)
 scales = torch.cat([scales for _ in range(batch_size)], dim = 0)
 fake_data = generator(z, scales)

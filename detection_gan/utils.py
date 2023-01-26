@@ -1,5 +1,10 @@
 import numpy as np
 import torch
+from tensorflow.python.framework import ops
+from tensorflow.python.ops import math_ops
+from tensorflow.python.ops.losses import losses
+from tensorflow.python.ops.losses import util
+
 def box_numbers(numbers, response_scale):
     '''
     numbers - a flat cuda tensor of numbers
@@ -14,6 +19,7 @@ def box_numbers(numbers, response_scale):
     modify_numbers = torch.where(scale_numbers ==0, torch.inf, scale_numbers)
     rounded_numbers = torch.round(modify_numbers)
     scaled_buckets = (rounded_numbers / response_scale)
+
     bucketized_numbers = torch.where(torch.isinf(scaled_buckets), torch.zeros_like(scaled_buckets), scaled_buckets)
 
     return bucketized_numbers
@@ -28,3 +34,11 @@ def sampling_from_survey(three_d_array, scales):
     n_rows = np.random.randint(1, three_d_array.shape[0], size=1)
     three_d_array = three_d_array[np.random.choice(three_d_array.shape[0], n_rows, replace=False), :]
     return three_d_array, scales
+
+
+# generate a random positive tensor in range 0 to 1
+
+# a = torch.rand(100)
+# b = torch.Tensor([10] * 100)
+# c = box_numbers(a,b)
+# plt.hist(c)

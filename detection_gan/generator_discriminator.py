@@ -42,3 +42,47 @@ class Discriminator(torch.nn.Module):
             x = torch.nn.functional.relu(getattr(self, f'linear_{idx}')(x))
         x = torch.sigmoid(getattr(self, f'linear_{len(self.layer_sizes) - 2}')(x))
         return x
+class CNN_Generator(torch.nn.Module):
+    def __init__(self):
+        super(CNN_Generator, self).__init__()
+
+        self.model = torch.nn.Sequential()
+        for i in range(13):
+            self.model.add_module(f'conv_{i}', torch.nn.ConvTranspose1d(in_channels=100, out_channels=100, kernel_size=4, stride=1))
+            self.model.add_module(f'norm_{i}', torch.nn.BatchNorm1d(100))
+            self.model.add_module(f'relu_{i}', torch.nn.ReLU())
+
+
+
+    def forward(self, x):
+        x = self.model(x)
+        x = torch.sigmoid(x)
+        return x
+
+
+class CNN_Discriminator(torch.nn.Module):
+    def __init__(self):
+        super(CNN_Discriminator, self).__init__()
+        self.conv_simple = torch.nn.Conv1d(in_channels=100, out_channels=100, kernel_size=1, stride=1) # 35
+        self.conv_short = torch.nn.Conv1d(in_channels=100, out_channels=100, kernel_size=3, stride=1) # 38
+        self.conv_long = torch.nn.Conv1d(in_channels=100, out_channels=100, kernel_size=6, stride=1) # 35
+        self.flatten = torch.nn.Flatten()
+        self.linear_1 = torch.nn.Linear(((35 * 100) + (38 * 100) + (40 * 100)), 300)
+        self.linear_2 = torch.nn.Linear(300, 100)
+        self.norm = torch.nn.BatchNorm1d(100)
+
+
+    def forward(self, x):
+        x_simple = torch.nn.functional.relu(self.conv_simple(x))
+        x_short = torch.nn.functional.relu(self.conv_short(x))
+        x_long = torch.nn.functional.relu(self.conv_long(x))
+        x_simple = self.norm(x_simple)
+        x_short = self.norm(x_short)
+        x_long = self.norm(x_long)
+        x = torch.cat((x_simple, x_short, x_long), dim=2)
+        x = self.flatten(x)
+        x = torch.nn.functional.relu(self.linear_1(x))
+        x = self.linear_2(x)
+        x = torch.sigmoid(x)
+
+        return x
