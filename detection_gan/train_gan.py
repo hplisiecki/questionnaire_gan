@@ -46,7 +46,7 @@ optimizer_discriminator = torch.optim.AdamW(discriminator.parameters(),
 
 critic_range = 5
 save_dir = r'D:\GitHub\questionnaire_gan\detection_gan\models\test_9'
-epochs = 100000
+epochs = 1000
 batch_size = 1000
 
 # load

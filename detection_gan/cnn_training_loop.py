@@ -2,7 +2,6 @@ import sys
 sys.path.insert(0, r'D:\GitHub\questionnaire_gan\detection_gan')
 import torch
 from data_mixer import data_mixer
-import wandb
 from dataloader import load_data
 import wandb
 from tqdm import tqdm
@@ -25,6 +24,7 @@ def training_loop(generator, discriminator, epochs, batch_size, device, save_dir
             real_batches = data_list[idx]
             total_loss_disc = 0
             total_loss_gen = 0
+            total_disc_acc = 0
             for n_critic in range(critic_range):
                 for idx, (inputs, scales) in enumerate(real_batches):
                     # zero the parameter gradients
@@ -49,7 +49,17 @@ def training_loop(generator, discriminator, epochs, batch_size, device, save_dir
 
                     discriminator_output = discriminator(mixed_data)
                     labels = labels.to(torch.float32)
+                    where_not_padding = torch.where(mixed_data.sum(dim=2).view(-1) > 0)[0]
+                    discriminator_output = discriminator_output.view(-1)
+                    discriminator_output = discriminator_output[where_not_padding]
+                    labels = labels.view(-1)
+                    labels = labels[where_not_padding]
+
                     discriminator_loss = criterion(discriminator_output, labels)
+
+
+                    acc = torch.sum(torch.round(discriminator_output) == labels) / len(labels)
+                    total_disc_acc += acc.item()
                     total_loss_disc += discriminator_loss.item()
                     discriminator_loss.backward()
                     optimizer_discriminator.step()
@@ -78,12 +88,16 @@ def training_loop(generator, discriminator, epochs, batch_size, device, save_dir
                     mixed_data, labels = data_mixer(inputs, fake_data, device)
                     mixed_data = mixed_data.to(torch.float32)
                     # reverse labels
-
-                    labels = torch.ones(labels.shape[0], labels.shape[1]).to(device)
-                    labels = labels.to(torch.float32)
-
+                    labels = labels.view(-1)
+                    label_zeros = torch.where(labels == 0)[0]
                     discriminator_output = discriminator(mixed_data)
-                    generator_loss = criterion(discriminator_output, labels)
+                    discriminator_output = discriminator_output.view(-1)
+                    fake_discriminator = discriminator_output[label_zeros]
+                    where_not_padding = torch.where(fake_discriminator > 0)[0]
+                    fake_discriminator = fake_discriminator[where_not_padding]
+                    labels = torch.ones(fake_discriminator.shape[0]).to(device)
+
+                    generator_loss = criterion(fake_discriminator, labels)
                     total_loss_gen += generator_loss.item()
 
                     generator_loss.backward()
@@ -93,8 +107,9 @@ def training_loop(generator, discriminator, epochs, batch_size, device, save_dir
                         scheduler_gen.step()
 
             if epoch % 1 == 0:
-                wandb.log({"Generator Loss": total_loss_gen / len(real_batches),
+                wandb.log({"Generator Loss": total_loss_gen / (len(real_batches) * mimic_range),
                            "Discriminator Loss": total_loss_disc / (len(real_batches) * critic_range),
+                            "Discriminator Accuracy": total_disc_acc / (len(real_batches) * critic_range),
                            "Discriminator Learning Rate": optimizer_discriminator.param_groups[0]['lr'],
                           "Generator Learning Rate": optimizer_generator.param_groups[0]['lr'],
                            "Epoch": epoch})

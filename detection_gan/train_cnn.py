@@ -12,7 +12,7 @@ device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 
 generator = CNN_Generator()
-layer_sizes = [100, 4000]
+layer_sizes = [100, 8000, 4000]
 # layer_sizes = [100, 2000, 4000]
 
 generator = Generator(layer_sizes, 40)
@@ -21,6 +21,8 @@ generator = Generator(layer_sizes, 40)
 # with mean 0 and standard deviation 0.02
 generator.linear_0.weight.data.normal_(0, 0.02)
 generator.linear_0.bias.data.fill_(0)
+generator.linear_1.weight.data.normal_(0, 0.02)
+generator.linear_1.bias.data.fill_(0)
 
 
 discriminator = CNN_Discriminator()
@@ -29,7 +31,7 @@ generator = generator.to(device)
 discriminator = discriminator.to(device)
 
 optimizer_generator = torch.optim.AdamW(generator.parameters(),
-                    lr=5e-4,
+                    lr=5e-5,
                     eps=1e-8,  # Epsilon
                     weight_decay=0.3,
                     amsgrad=True,
@@ -46,9 +48,9 @@ optimizer_discriminator = torch.optim.AdamW(discriminator.parameters(),
 
 criterion = torch.nn.BCELoss()
 critic_range = 1
-mimic_range = 4
+mimic_range = 1
 save_dir = r'D:\GitHub\questionnaire_gan\detection_gan\models\test_cnn_2'
-epochs = 100000
+epochs = 160
 batch_size = 1000
 
 # load
@@ -57,11 +59,11 @@ batch_size = 1000
 
 scheduler_generator = get_linear_schedule_with_warmup(optimizer_generator,
                                             num_warmup_steps=500,
-                                            num_training_steps= 4000 * epochs)
+                                            num_training_steps= 4 * 10 * epochs)
 
 scheduler_discriminator = get_linear_schedule_with_warmup(optimizer_discriminator,
                                             num_warmup_steps=500,
-                                            num_training_steps= 4000 * epochs)
+                                            num_training_steps= 4 * 10 * epochs)
 
 
 
