@@ -11,18 +11,17 @@ device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 
 
-generator = CNN_Generator()
-layer_sizes = [100, 8000, 4000]
+layer_sizes = [100, 84000]
 # layer_sizes = [100, 2000, 4000]
 
 generator = Generator(layer_sizes, 40)
 
-# initialize weights to be normally distributed
 # with mean 0 and standard deviation 0.02
-generator.linear_0.weight.data.normal_(0, 0.02)
-generator.linear_0.bias.data.fill_(0)
-generator.linear_1.weight.data.normal_(0, 0.02)
-generator.linear_1.bias.data.fill_(0)
+# generator.linear_gen_0.weight.data.normal_(0, 1)
+# generator.linear_gen_0.bias.data.fill_(0)
+# generator.linear_gen_1.weight.data.normal_(0, 1)
+# generator.linear_gen_1.bias.data.fill_(0)
+
 
 
 discriminator = CNN_Discriminator()
@@ -36,6 +35,7 @@ optimizer_generator = torch.optim.AdamW(generator.parameters(),
                     weight_decay=0.3,
                     amsgrad=True,
                     betas = (0.9, 0.999))
+
 
 optimizer_discriminator = torch.optim.AdamW(discriminator.parameters(),
                     lr=5e-5,
@@ -51,21 +51,19 @@ critic_range = 1
 mimic_range = 1
 save_dir = r'D:\GitHub\questionnaire_gan\detection_gan\models\test_cnn_2'
 epochs = 160
-batch_size = 1000
+batch_size = 1
 
 # load
 # generator.load_state_dict(torch.load(r'D:\GitHub\questionnaire_gan\detection_gan\models\test_cnn_1generator'))
-# discriminator.load_state_dict(torch.load(r'D:\GitHub\questionnaire_gan\detection_gan\models\test_cnn_1discriminator'))
+# discriminator.load_state_dict(torch.load(r'D:\GitHub\questionnaire_gan\detection_gan\models\test_cnn_2discriminator'))
 
 scheduler_generator = get_linear_schedule_with_warmup(optimizer_generator,
-                                            num_warmup_steps=500,
-                                            num_training_steps= 4 * 10 * epochs)
+                                            num_warmup_steps = 8000,
+                                            num_training_steps= (4000 / batch_size) * epochs)
 
 scheduler_discriminator = get_linear_schedule_with_warmup(optimizer_discriminator,
-                                            num_warmup_steps=500,
-                                            num_training_steps= 4 * 10 * epochs)
-
-
+                                            num_warmup_steps = 8000,
+                                            num_training_steps= (4000 / batch_size) * epochs)
 
 wandb.init(project="detection_gan", entity="hubertp")
 wandb.watch(generator, log_freq=5)

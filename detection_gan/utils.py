@@ -15,13 +15,17 @@ def box_numbers(numbers, response_scale):
     '''
     # bucketize
     scale_numbers = (numbers * response_scale)
+
     # change zeros to inf
     modify_numbers = torch.where(scale_numbers ==0, torch.inf, scale_numbers)
     rounded_numbers = torch.round(modify_numbers)
+
     scaled_buckets = (rounded_numbers / response_scale)
 
-    bucketized_numbers = torch.where(torch.isinf(scaled_buckets), torch.zeros_like(scaled_buckets), scaled_buckets)
 
+    bucketized_numbers = torch.where(torch.isinf(scaled_buckets), torch.zeros_like(scaled_buckets), scaled_buckets)
+    # retain grad
+    bucketized_numbers.retain_grad()
     return bucketized_numbers
 
 def sampling_from_survey(three_d_array, scales):
