@@ -30,6 +30,4 @@ Want to contribute, adapt, or learn from this project? Start by exploring the `d
 
 Join us in reshaping the future of online surveys and ensuring data validity! Feedback, contributions, and insights are always welcome. :rocket:
 
---- 
-
-This expanded README is designed to be more engaging and informative for recruiters or anyone interested in the project, offering a clear structure and highlighting the potential applications of the project.
+---
