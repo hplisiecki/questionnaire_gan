@@ -14,7 +14,8 @@ Welcome to the `Questionnaire GAN` repository! Dive into cutting-edge techniques
 :file_folder: **Repository Structure:**
 
 - `detection_gan` folder: Houses code related to the training of the GAN for fake data detection.
-- Other folders: Include utility functions, dataset handlers, and more.
+- `simple_net` folder: Houses code related to a connected project aiming to detect non-ergodic data
+- The rest of the code files were used to generate the required datasets, either from scratch when it comes to the ergodicity project or from online survey databases, which are used to train the GAN
 
 :bulb: **Potential Applications:**
 
